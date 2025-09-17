@@ -1,33 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-
+//useffect
+import { useState, useEffect } from 'react'
+type ProdutoType = {
+  _id: string,
+  nome: string,
+  preco: number,
+  urlfoto: string,
+  descricao: string
+}
 function App() {
-  const [count, setCount] = useState(0)
+  const [produtos, setProdutos] = useState<ProdutoType[]>([])
 
+  useEffect(() => {
+    fetch('/api/produtos')
+      .then((response) => response.json())
+      .then((data) => setProdutos(data))
+      .catch((error) => console.error('Error fetching data:', error))
+  }, [])
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <div>Cadastro de Produtos</div>
+    <form onSubmit={handleform}>
+        <input type="text" name="nome" placeholder="Nome do Produto" />
+        <input type="number" name="preco" placeholder="Preço do Produto" />
+        <input type="text" name="urlfoto" placeholder="URL da Foto" />
+        <input type="text" name="descricao" placeholder="Descrição do Produto" />
+        <button type="submit">Cadastrar Produto</button>
+    </form>
+      <div>Lista de Produtos</div>
+      {
+        produtos.map((produto) => (
+          <div key={produto._id}>
+            <h2>{produto.nome}</h2>
+            <p>R$ {produto.preco}</p>
+            <img src={produto.urlfoto} alt={produto.nome} width="200" />
+            <p>{produto.descricao}</p>
+          </div>
+        ))
+      }
     </>
   )
 }
